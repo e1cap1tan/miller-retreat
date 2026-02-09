@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Miller Retreat — Cleaning Schedule</title>
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --primary: #2563eb;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 16px 0 24px;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        header p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .month-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 0;
+            margin-top: 8px;
+        }
+
+        .cleaning-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--primary);
+        }
+
+        .cleaning-card.same-day {
+            border-left-color: var(--accent);
+        }
+
+        .cleaning-card.urgent {
+            border-left-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .cleaning-date {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .cleaning-day {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .cleaning-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 6px 0;
+        }
+
+        .cleaning-detail .icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .cleaning-detail .info {
+            flex: 1;
+        }
+
+        .cleaning-detail .label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .cleaning-detail .value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .window-bar {
+            margin-top: 12px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-bar.tight {
+            background: #fff7ed;
+        }
+
+        .window-bar .time {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .window-bar.tight .time {
+            color: var(--accent);
+        }
+
+        .window-bar .desc {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
+        .badge.same-day { background: #fef3c7; color: #92400e; }
+        .badge.pets { background: #ede9fe; color: #5b21b6; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state .emoji { font-size: 40px; }
+        .empty-state p { margin-top: 8px; font-size: 15px; }
+
+        .updated {
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+            padding: 16px 0 32px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            padding-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .legend-dot.normal { background: var(--primary); }
+        .legend-dot.tight { background: var(--accent); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏠 Miller Retreat</h1>
+        <p>Cleaning Schedule</p>
+    </header>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot normal"></div>
+            <span>Standard</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot tight"></div>
+            <span>Same-day turnaround</span>
+        </div>
+    </div>
+
+    <div id="calendar"></div>
+
+    <div class="updated" id="updated"></div>
+
+    <script>
+    // CLEANING SCHEDULE DATA — Fred updates this automatically
+    const SCHEDULE_DATA = {
+        updated: "2026-02-09T15:57:00-06:00",
+        cleanings: [
+            {
+                date: "2026-02-13",
+                checkoutGuest: "Cristin",
+                checkoutTime: "11:00 AM",
+                checkinGuest: "Stephanie",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
+                pets: true,
+                notes: "Pet cleanup needed (1 dog)"
+            },
+            {
+                date: "2026-02-15",
+                checkoutGuest: "Stephanie",
+                checkoutTime: "11:00 AM",
+                checkinGuest: null,
+                checkinTime: null,
+                sameDayTurnaround: false,
+                pets: true,
+                notes: "1 pet"
+            }
+        ]
+    };
+
+    function formatDate(dateStr) {
+        const d = new Date(dateStr + 'T12:00:00');
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return {
+            display: `${months[d.getMonth()]} ${d.getDate()}`,
+            day: days[d.getDay()],
+            month: `${months[d.getMonth()]} ${d.getFullYear()}`,
+            raw: d
+        };
+    }
+
+    function getWindowHours(checkout, checkin) {
+        if (!checkin) return null;
+        const parseTime = (t) => {
+            const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            let h = parseInt(m[1]);
+            if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+            if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+            return h + parseInt(m[2]) / 60;
+        };
+        return parseTime(checkin) - parseTime(checkout);
+    }
+
+    function render() {
+        const container = document.getElementById('calendar');
+        const data = SCHEDULE_DATA;
+
+        if (!data.cleanings.length) {
+            container.innerHTML = '<div class="empty-state"><div class="emoji">✨</div><p>No cleanings scheduled</p></div>';
+            return;
+        }
+
+        let html = '';
+        let currentMonth = '';
+
+        // Filter to upcoming only (today and future)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const upcoming = data.cleanings.filter(c => new Date(c.date + 'T23:59:59') >= today);
+
+        if (!upcoming.length) {
+            container.innerHTML = '<div class="empty-state"><div class="emoji">✨</div><p>No upcoming cleanings</p></div>';
+            return;
+        }
+
+        upcoming.forEach(c => {
+            const dateInfo = formatDate(c.date);
+
+            if (dateInfo.month !== currentMonth) {
+                currentMonth = dateInfo.month;
+                html += `<div class="month-label">${currentMonth}</div>`;
+            }
+
+            const windowHrs = getWindowHours(c.checkoutTime, c.checkinTime);
+            const isTight = c.sameDayTurnaround;
+
+            html += `<div class="cleaning-card ${isTight ? 'same-day' : ''}">`;
+            html += `<div class="cleaning-date">${dateInfo.display}`;
+            if (isTight) html += `<span class="badge same-day">Same-day</span>`;
+            if (c.pets) html += `<span class="badge pets">🐾 Pets</span>`;
+            html += `</div>`;
+            html += `<div class="cleaning-day">${dateInfo.day}</div>`;
+
+            // Checkout info
+            html += `<div class="cleaning-detail">
+                <div class="icon">👋</div>
+                <div class="info">
+                    <div class="label">Checkout</div>
+                    <div class="value">${c.checkoutGuest} — ${c.checkoutTime}</div>
+                </div>
+            </div>`;
+
+            // Check-in info
+            if (c.checkinGuest) {
+                html += `<div class="cleaning-detail">
+                    <div class="icon">🔑</div>
+                    <div class="info">
+                        <div class="label">Next check-in</div>
+                        <div class="value">${c.checkinGuest} — ${c.checkinTime}</div>
+                    </div>
+                </div>`;
+            } else {
+                html += `<div class="cleaning-detail">
+                    <div class="icon">📭</div>
+                    <div class="info">
+                        <div class="label">Next check-in</div>
+                        <div class="value">No booking yet</div>
+                    </div>
+                </div>`;
+            }
+
+            // Notes
+            if (c.notes) {
+                html += `<div class="cleaning-detail">
+                    <div class="icon">📝</div>
+                    <div class="info">
+                        <div class="label">Notes</div>
+                        <div class="value">${c.notes}</div>
+                    </div>
+                </div>`;
+            }
+
+            // Cleaning window
+            if (windowHrs) {
+                html += `<div class="window-bar ${windowHrs < 6 ? 'tight' : ''}">
+                    <div class="time">${windowHrs}h window</div>
+                    <div class="desc">${c.checkoutTime} → ${c.checkinTime}</div>
+                </div>`;
+            }
+
+            html += `</div>`;
+        });
+
+        container.innerHTML = html;
+
+        // Updated timestamp
+        const updatedDate = new Date(data.updated);
+        document.getElementById('updated').textContent = `Last updated: ${updatedDate.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}`;
+    }
+
+    render();
+    </script>
+</body>
+</html>
