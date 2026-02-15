@@ -222,7 +222,7 @@
     <script>
     // CLEANING SCHEDULE DATA — Fred updates this automatically
     const SCHEDULE_DATA = {
-        updated: "2026-02-12T09:26:00-06:00",
+        updated: "2026-02-14T20:55:00-06:00",
         cleanings: [
             {
                 date: "2026-02-13",
@@ -238,11 +238,21 @@
                 date: "2026-02-15",
                 checkoutGuest: "Stephanie",
                 checkoutTime: "11:00 AM",
+                checkinGuest: "Jerson",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
+                pets: true,
+                notes: "Same-day turnaround! 3 guests + 1 pet checking in"
+            },
+            {
+                date: "2026-02-17",
+                checkoutGuest: "Jerson",
+                checkoutTime: "11:00 AM",
                 checkinGuest: null,
                 checkinTime: null,
                 sameDayTurnaround: false,
                 pets: true,
-                notes: "1 pet"
+                notes: "3 guests, 1 pet — 2-night stay"
             },
             {
                 date: "2026-02-22",
@@ -252,7 +262,7 @@
                 checkinTime: null,
                 sameDayTurnaround: false,
                 pets: false,
-                notes: "2 adults, no pets — 2-night stay"
+                notes: "2 adults, no pets — 3-night stay (Feb 19-22)"
             },
             {
                 date: "2026-02-25",
