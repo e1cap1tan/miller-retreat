@@ -222,77 +222,37 @@
     <script>
     // CLEANING SCHEDULE DATA — Fred updates this automatically
     const SCHEDULE_DATA = {
-        updated: "2026-02-26T07:52:00-06:00",
+        updated: "2026-03-08T08:00:00-05:00",
         cleanings: [
-            {
-                date: "2026-02-27",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Jefrey Bond",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: true,
-                notes: "Pre-arrival cleaning for 2 adults + 1 pet — 3-night stay (Feb 27-Mar 2)"
-            },
-            {
-                date: "2026-03-02",
-                checkoutGuest: "Jefrey Bond",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Anita",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: true,
-                notes: "Same-day turnaround! Jefrey checkout (1 pet) → Anita checkin (2 pets), extra pet cleanup needed"
-            },
-            {
-                date: "2026-03-05",
-                checkoutGuest: "Anita",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: true,
-                notes: "2 adults, 2 pets — 3-night stay (Mar 2-5)"
-            },
-            {
-                date: "2026-03-06",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Aimee Rose",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "Pre-arrival cleaning for 2 adults from Germany — 2-night stay (Mar 6-8)"
-            },
             {
                 date: "2026-03-08",
                 checkoutGuest: "Aimee Rose",
                 checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
+                checkinGuest: "Wil Hernandez",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
                 pets: false,
-                notes: "2 adults from Germany, no pets — 2-night stay (Mar 6-8)"
+                notes: "Same-day turnaround! Aimee checkout → Wil checkin, 1 adult, no pets — 2-night stay (Mar 8-10)"
             },
             {
                 date: "2026-03-10",
-                checkoutGuest: null,
-                checkoutTime: null,
+                checkoutGuest: "Wil Hernandez",
+                checkoutTime: "11:00 AM",
                 checkinGuest: "Jessa De La Rosa",
                 checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
+                sameDayTurnaround: true,
                 pets: false,
-                notes: "Pre-arrival cleaning for 1 adult from Charleston, SC — 3-night stay (Mar 10-13)"
+                notes: "Same-day turnaround! Wil checkout → Jessa checkin, 1 adult, no pets — 3-night stay (Mar 10-13)"
             },
             {
                 date: "2026-03-13",
                 checkoutGuest: "Jessa De La Rosa",
                 checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
+                checkinGuest: "Brittney Junquera",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
                 pets: false,
-                notes: "1 adult, no pets — 3-night stay (Mar 10-13)"
+                notes: "Same-day turnaround! Jessa checkout → Brittney checkin, 2 adults, no pets — 2-night stay (Mar 13-15)"
             },
             {
                 date: "2026-03-14",
@@ -305,14 +265,24 @@
                 notes: "Pre-arrival cleaning for 2 adults + 1 pet — 4-night stay (Mar 14-18)"
             },
             {
+                date: "2026-03-15",
+                checkoutGuest: "Brittney Junquera",
+                checkoutTime: "11:00 AM",
+                checkinGuest: "Jayden Trejo",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
+                pets: false,
+                notes: "Same-day turnaround! Brittney checkout → Jayden checkin, 2 adults + 3 children, no pets — 3-night stay (Mar 15-18)"
+            },
+            {
                 date: "2026-03-18",
-                checkoutGuest: "Jennifer Belniak",
+                checkoutGuest: "Jennifer Belniak / Jayden Trejo",
                 checkoutTime: "11:00 AM",
                 checkinGuest: null,
                 checkinTime: null,
                 sameDayTurnaround: false,
                 pets: true,
-                notes: "2 adults, 1 pet — 4-night stay (Mar 14-18)"
+                notes: "Both guests checkout Mar 18"
             },
             {
                 date: "2026-03-25",
@@ -342,7 +312,7 @@
                 checkinTime: "4:00 PM",
                 sameDayTurnaround: true,
                 pets: true,
-                notes: "Same-day turnaround! Tyler checkout → Chad checkin, 2 adults + 1 pet from Seguin, TX — 3-night stay (Mar 30-Apr 2)"
+                notes: "Same-day turnaround! Tyler checkout → Chad checkin, 2 adults + 1 pet — 3-night stay (Mar 30-Apr 2)"
             },
             {
                 date: "2026-04-02",
@@ -352,7 +322,7 @@
                 checkinTime: null,
                 sameDayTurnaround: false,
                 pets: true,
-                notes: "2 adults, 1 pet from Seguin, TX — 3-night stay (Mar 30-Apr 2)"
+                notes: "2 adults, 1 pet — 3-night stay (Mar 30-Apr 2)"
             },
             {
                 date: "2026-04-10",
@@ -362,17 +332,57 @@
                 checkinTime: "4:00 PM",
                 sameDayTurnaround: false,
                 pets: false,
-                notes: "Pre-arrival cleaning for 3 adults from Grand Prairie, TX — 2-night stay (Apr 10-12)"
+                notes: "Pre-arrival cleaning for 3 adults — 2-night stay (Apr 10-12)"
             },
             {
                 date: "2026-04-12",
                 checkoutGuest: "Jordin Baylee",
                 checkoutTime: "11:00 AM",
+                checkinGuest: "Ruth Woolsey",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
+                pets: true,
+                notes: "Same-day turnaround! Jordin checkout → Ruth checkin, 2 adults + 2 pets — 5-night stay (Apr 12-17)"
+            },
+            {
+                date: "2026-04-17",
+                checkoutGuest: "Ruth Woolsey",
+                checkoutTime: "11:00 AM",
+                checkinGuest: "Jason Wallace",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: true,
+                pets: true,
+                notes: "Same-day turnaround! Ruth checkout (2 pets) → Jason checkin (2 pets), 2 adults — 2-night stay (Apr 17-19)"
+            },
+            {
+                date: "2026-04-19",
+                checkoutGuest: "Jason Wallace",
+                checkoutTime: "11:00 AM",
+                checkinGuest: null,
+                checkinTime: null,
+                sameDayTurnaround: false,
+                pets: true,
+                notes: "2 adults, 2 pets — 2-night stay (Apr 17-19)"
+            },
+            {
+                date: "2026-04-28",
+                checkoutGuest: null,
+                checkoutTime: null,
+                checkinGuest: "Amala De La Luz",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: false,
+                pets: false,
+                notes: "Pre-arrival cleaning for 2 adults — 2-night stay (Apr 28-30)"
+            },
+            {
+                date: "2026-04-30",
+                checkoutGuest: "Amala De La Luz",
+                checkoutTime: "11:00 AM",
                 checkinGuest: null,
                 checkinTime: null,
                 sameDayTurnaround: false,
                 pets: false,
-                notes: "3 adults, no pets from Grand Prairie, TX — 2-night stay (Apr 10-12)"
+                notes: "2 adults, no pets — 2-night stay (Apr 28-30)"
             },
             {
                 date: "2026-05-08",
@@ -393,6 +403,26 @@
                 sameDayTurnaround: false,
                 pets: false,
                 notes: "4 adults, no pets — 2-night stay (May 8-10)"
+            },
+            {
+                date: "2026-05-12",
+                checkoutGuest: null,
+                checkoutTime: null,
+                checkinGuest: "Hannah Preston",
+                checkinTime: "4:00 PM",
+                sameDayTurnaround: false,
+                pets: false,
+                notes: "Pre-arrival cleaning for 1 adult — 3-night stay (May 12-15)"
+            },
+            {
+                date: "2026-05-15",
+                checkoutGuest: "Hannah Preston",
+                checkoutTime: "11:00 AM",
+                checkinGuest: null,
+                checkinTime: null,
+                sameDayTurnaround: false,
+                pets: false,
+                notes: "1 adult, no pets — 3-night stay (May 12-15)"
             }
         ]
     };
