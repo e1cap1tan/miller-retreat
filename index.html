@@ -470,7 +470,7 @@
     }
 
     function getWindowHours(checkout, checkin) {
-        if (!checkin) return null;
+        if (!checkin || !checkout) return null;
         const parseTime = (t) => {
             const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
             let h = parseInt(m[1]);
@@ -523,13 +523,23 @@
             html += `<div class="cleaning-day">${dateInfo.day}</div>`;
 
             // Checkout info
-            html += `<div class="cleaning-detail">
-                <div class="icon">👋</div>
-                <div class="info">
-                    <div class="label">Checkout</div>
-                    <div class="value">${c.checkoutGuest} — ${c.checkoutTime}</div>
-                </div>
-            </div>`;
+            if (c.checkoutGuest) {
+                html += `<div class="cleaning-detail">
+                    <div class="icon">👋</div>
+                    <div class="info">
+                        <div class="label">Checkout</div>
+                        <div class="value">${c.checkoutGuest} — ${c.checkoutTime}</div>
+                    </div>
+                </div>`;
+            } else {
+                html += `<div class="cleaning-detail">
+                    <div class="icon">🧹</div>
+                    <div class="info">
+                        <div class="label">Checkout</div>
+                        <div class="value">Pre-arrival cleaning</div>
+                    </div>
+                </div>`;
+            }
 
             // Check-in info
             if (c.checkinGuest) {
