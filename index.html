@@ -68,15 +68,14 @@
             border-left-color: var(--accent);
         }
 
-        .cleaning-card.urgent {
-            border-left-color: var(--danger);
-            background: #fef2f2;
-        }
-
         .cleaning-date {
             font-size: 18px;
             font-weight: 700;
             color: var(--text);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .cleaning-day {
@@ -113,6 +112,7 @@
         .cleaning-detail .value {
             font-size: 14px;
             font-weight: 500;
+            line-height: 1.4;
         }
 
         .window-bar {
@@ -150,7 +150,6 @@
             font-weight: 600;
             padding: 2px 8px;
             border-radius: 10px;
-            margin-left: 6px;
         }
 
         .badge.same-day { background: #fef3c7; color: #92400e; }
@@ -196,6 +195,7 @@
 
         .legend-dot.normal { background: var(--primary); }
         .legend-dot.tight { background: var(--accent); }
+        .legend-dot.pets { background: #7c3aed; }
     </style>
 </head>
 <body>
@@ -213,249 +213,186 @@
             <div class="legend-dot tight"></div>
             <span>Same-day turnaround</span>
         </div>
+        <div class="legend-item">
+            <div class="legend-dot pets"></div>
+            <span>Pets / deep clean</span>
+        </div>
     </div>
 
     <div id="calendar"></div>
-
     <div class="updated" id="updated"></div>
 
     <script>
-    // CLEANING SCHEDULE DATA — Fred updates this automatically
     const SCHEDULE_DATA = {
-        updated: "2026-03-08T08:00:00-05:00",
-        cleanings: [
-            {
-                date: "2026-03-08",
-                checkoutGuest: "Aimee Rose",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Wil Hernandez",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Aimee checkout → Wil checkin, 1 adult, no pets — 2-night stay (Mar 8-10)"
-            },
-            {
-                date: "2026-03-10",
-                checkoutGuest: "Wil Hernandez",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Jessa De La Rosa",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Wil checkout → Jessa checkin, 1 adult, no pets — 3-night stay (Mar 10-13)"
-            },
-            {
-                date: "2026-03-13",
-                checkoutGuest: "Jessa De La Rosa",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Brittney Junquera",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Jessa checkout → Brittney checkin, 2 adults, no pets — 2-night stay (Mar 13-15)"
-            },
-            {
-                date: "2026-03-15",
-                checkoutGuest: "Brittney Junquera",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Jayden Trejo",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Brittney checkout → Jayden checkin, 2 adults + 3 children, no pets — 3-night stay (Mar 15-18)"
-            },
-            {
-                date: "2026-03-18",
-                checkoutGuest: "Jayden Trejo",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "2 adults + 3 children, no pets — 3-night stay (Mar 15-18). Jennifer Belniak (Mar 14-18) canceled."
-            },
-            {
-                date: "2026-03-25",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Rebecc Caudal",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "Pre-arrival cleaning for 3 adults from Grapevine, TX — 3-night stay (Mar 25-28)"
-            },
-            {
-                date: "2026-03-28",
-                checkoutGuest: "Rebecc Caudal",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Tyler Douglas",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Rebecc checkout → Tyler checkin, 2 adults, no pets — 2-night stay (Mar 28-30)"
-            },
-            {
-                date: "2026-03-30",
-                checkoutGuest: "Tyler Douglas",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Chad Stalnaker",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: true,
-                notes: "Same-day turnaround! Tyler checkout → Chad checkin, 2 adults + 1 pet — 3-night stay (Mar 30-Apr 2)"
-            },
-            {
-                date: "2026-04-02",
-                checkoutGuest: "Chad Stalnaker",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: true,
-                notes: "2 adults, 1 pet — 3-night stay (Mar 30-Apr 2)"
-            },
-            {
-                date: "2026-04-10",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Jordin Baylee",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "Pre-arrival cleaning for 3 adults — 2-night stay (Apr 10-12)"
-            },
-            {
-                date: "2026-04-12",
-                checkoutGuest: "Jordin Baylee",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Ruth Woolsey",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: true,
-                notes: "Same-day turnaround! Jordin checkout → Ruth checkin, 2 adults + 2 pets — 5-night stay (Apr 12-17)"
-            },
-            {
-                date: "2026-04-17",
-                checkoutGuest: "Ruth Woolsey",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Jason Wallace",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: true,
-                notes: "Same-day turnaround! Ruth checkout (2 pets) → Jason checkin (2 pets), 2 adults — 2-night stay (Apr 17-19)"
-            },
-            {
-                date: "2026-04-19",
-                checkoutGuest: "Jason Wallace",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: true,
-                notes: "2 adults, 2 pets — 2-night stay (Apr 17-19)"
-            },
-            {
-                date: "2026-04-24",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Michael Geiman",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "Pre-arrival cleaning for 1 adult — 2-night stay (Apr 24-26)"
-            },
-            {
-                date: "2026-04-26",
-                checkoutGuest: "Michael Geiman",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "1 adult, no pets — 2-night stay (Apr 24-26)"
-            },
-            {
-                date: "2026-04-28",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Amala De La Luz",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "Pre-arrival cleaning for 2 adults — 2-night stay (Apr 28-30)"
-            },
-            {
-                date: "2026-04-30",
-                checkoutGuest: "Amala De La Luz",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "2 adults, no pets — 2-night stay (Apr 28-30)"
-            },
-            {
-                date: "2026-05-08",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Amy Brown",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "Pre-arrival cleaning for 4 adults — 2-night stay (May 8-10)"
-            },
-            {
-                date: "2026-05-10",
-                checkoutGuest: "Amy Brown",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Logan Chamberlain",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Amy checkout → Logan checkin, 2 adults, no pets — 2-night stay (May 10-12)"
-            },
-            {
-                date: "2026-05-12",
-                checkoutGuest: "Logan Chamberlain",
-                checkoutTime: "11:00 AM",
-                checkinGuest: "Hannah Preston",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: true,
-                pets: false,
-                notes: "Same-day turnaround! Logan checkout → Hannah checkin, 1 adult, no pets — 3-night stay (May 12-15)"
-            },
-            {
-                date: "2026-05-15",
-                checkoutGuest: "Hannah Preston",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: false,
-                notes: "1 adult, no pets — 3-night stay (May 12-15)"
-            },
-            {
-                date: "2026-05-18",
-                checkoutGuest: null,
-                checkoutTime: null,
-                checkinGuest: "Yonila Gonzalez",
-                checkinTime: "4:00 PM",
-                sameDayTurnaround: false,
-                pets: true,
-                notes: "Pre-arrival cleaning for 1 adult + 2 children + 1 infant + 2 pets — 3-night stay (May 18-21)"
-            },
-            {
-                date: "2026-05-21",
-                checkoutGuest: "Yonila Gonzalez",
-                checkoutTime: "11:00 AM",
-                checkinGuest: null,
-                checkinTime: null,
-                sameDayTurnaround: false,
-                pets: true,
-                notes: "1 adult + 2 children + 1 infant + 2 pets — 3-night stay (May 18-21)"
-            }
+        "updated": "2026-03-28T08:06:25-05:00",
+        "cleanings": [
+                {
+                        "date": "2026-03-28",
+                        "checkoutGuest": "Rebecc Caudal",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Tyler Douglas",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "3 guests, no pets, 3-night stay (Mar 25\u2013Mar 28) \u2014 Mar 25-28, 3 nights, 3 adults. Payout $314.28. Guest from Grapevine, TX, 23 reviews, identity verified"
+                },
+                {
+                        "date": "2026-03-30",
+                        "checkoutGuest": "Tyler Douglas",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Chad Stalnaker",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "2 guests, no pets, 2-night stay (Mar 28\u2013Mar 30) \u2014 Mar 28-30, 2 nights, 2 adults, no pets. Payout $265.78. Identity verified"
+                },
+                {
+                        "date": "2026-04-02",
+                        "checkoutGuest": "Chad Stalnaker",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Johnathon Blaine",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": true,
+                        "petCount": 1,
+                        "notes": "2 guests, 1 pet, 3-night stay (Mar 30\u2013Apr 2)"
+                },
+                {
+                        "date": "2026-04-04",
+                        "checkoutGuest": "Johnathon Blaine",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "2 guests, no pets, 2-night stay (Apr 2\u2013Apr 4) \u2014 Pet count NOT verified \u2014 default 0 pending guest confirmation"
+                },
+                {
+                        "date": "2026-04-12",
+                        "checkoutGuest": "Jordin Baylee",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Ruth Woolsey",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "3 guests, no pets, 2-night stay (Apr 10\u2013Apr 12) \u2014 Welcome message sent Feb 19, 2026 at 7:24 AM with door code 3051"
+                },
+                {
+                        "date": "2026-04-17",
+                        "checkoutGuest": "Ruth Woolsey",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Jason Wallace",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": true,
+                        "petCount": 2,
+                        "notes": "2 guests, 2 pets, 5-night stay (Apr 12\u2013Apr 17) \u2014 Pet count NOT verified \u2014 default 0 pending guest confirmation. Pet count corrected to 2 (confirmed in email and Airbnb details panel)"
+                },
+                {
+                        "date": "2026-04-19",
+                        "checkoutGuest": "Jason Wallace",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": true,
+                        "petCount": 2,
+                        "notes": "2 guests, 2 pets, 2-night stay (Apr 17\u2013Apr 19) \u2014 Apr 17-19, 2 nights, 2 adults + 2 pets. From Huntsville TX. Identity verified, 6 reviews. Pet fee: $40 (2 pets x $20)"
+                },
+                {
+                        "date": "2026-04-26",
+                        "checkoutGuest": "Michael Geiman",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "1 guest, no pets, 2-night stay (Apr 24\u2013Apr 26) \u2014 New booking detected Mar 8, 2026 from Airbnb inbox. Apr 24-26, 2 nights, 1 adult (enjoys food scenes). Payout $267.72"
+                },
+                {
+                        "date": "2026-05-01",
+                        "checkoutGuest": "Amala De La Luz",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Sarah Larson",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "2 guests, no pets, 2-night stay (Apr 29\u2013May 1) \u2014 2 adults, no pets. Apr 23-25, 2 nights. Identity verified. Payout $254.14. Date change accepted Mar 4: 2026-04-23\u21922026-04-25 moved to Apr 28-30. Payout reduced by $60.14. Date change approved Mar 25: shifted from Apr 28-30 to Apr 29-May 1"
+                },
+                {
+                        "date": "2026-05-04",
+                        "checkoutGuest": "Sarah Larson",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "no pets, 3-night stay (May 1\u2013May 4) \u2014 New booking May 1-3, 2 guests. Autumn to clean after May 3 checkout"
+                },
+                {
+                        "date": "2026-05-12",
+                        "checkoutGuest": "Logan Chamberlain",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Hannah Preston",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "2 guests, no pets, 2-night stay (May 10\u2013May 12) \u2014 Pet count NOT verified \u2014 default 0 pending guest confirmation"
+                },
+                {
+                        "date": "2026-05-15",
+                        "checkoutGuest": "Hannah Preston",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": "Paul Richardson",
+                        "checkinTime": "4:00 PM",
+                        "sameDayTurnaround": true,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "1 guest, no pets, 3-night stay (May 12\u2013May 15) \u2014 New booking detected Mar 8, 2026. May 12-15, 3 nights, 1 adult, no pets. Identity verified, 4 reviews. Welcome message sent Mar 8, 2026 at 8:06 AM"
+                },
+                {
+                        "date": "2026-05-17",
+                        "checkoutGuest": "Paul Richardson",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "2 guests, no pets, 2-night stay (May 15\u2013May 17) \u2014 Pet count NOT verified \u2014 default 0 pending guest confirmation"
+                },
+                {
+                        "date": "2026-05-21",
+                        "checkoutGuest": "Yonila Gonzalez",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": true,
+                        "petCount": 2,
+                        "notes": "4 guests, 2 pets, 3-night stay (May 18\u2013May 21) \u2014 New booking detected Mar 8, 2026 from Airbnb inbox. May 18-21, 3 nights, 1 adult + 2 children + 1 infant + 2 pets (enjoys anime). Payout $298.76. Pet fee: $40 (2 pets x $20)"
+                },
+                {
+                        "date": "2026-06-03",
+                        "checkoutGuest": "Charlie Poca",
+                        "checkoutTime": "11:00 AM",
+                        "checkinGuest": null,
+                        "checkinTime": null,
+                        "sameDayTurnaround": false,
+                        "pets": false,
+                        "petCount": 0,
+                        "notes": "2 guests, no pets, 2-night stay (Jun 1\u2013Jun 3) \u2014 Aug 1 checkout cleanup. Autumn notification script timeout \u2014 manual iMessage recommended"
+                }
         ]
-    };
+};
 
     function formatDate(dateStr) {
         const d = new Date(dateStr + 'T12:00:00');
@@ -465,7 +402,6 @@
             display: `${months[d.getMonth()]} ${d.getDate()}`,
             day: days[d.getDay()],
             month: `${months[d.getMonth()]} ${d.getFullYear()}`,
-            raw: d
         };
     }
 
@@ -473,12 +409,21 @@
         if (!checkin || !checkout) return null;
         const parseTime = (t) => {
             const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
-            let h = parseInt(m[1]);
+            let h = parseInt(m[1], 10);
             if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
             if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
-            return h + parseInt(m[2]) / 60;
+            return h + parseInt(m[2], 10) / 60;
         };
         return parseTime(checkin) - parseTime(checkout);
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     function render() {
@@ -486,105 +431,50 @@
         const data = SCHEDULE_DATA;
 
         if (!data.cleanings.length) {
-            container.innerHTML = '<div class="empty-state"><div class="emoji">✨</div><p>No cleanings scheduled</p></div>';
+            container.innerHTML = '<div class="empty-state"><div class="emoji">✨</div><p>No upcoming cleanings</p></div>';
             return;
         }
 
         let html = '';
         let currentMonth = '';
 
-        // Filter to upcoming only (today and future)
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const upcoming = data.cleanings.filter(c => new Date(c.date + 'T23:59:59') >= today);
-
-        if (!upcoming.length) {
-            container.innerHTML = '<div class="empty-state"><div class="emoji">✨</div><p>No upcoming cleanings</p></div>';
-            return;
-        }
-
-        upcoming.forEach(c => {
+        data.cleanings.forEach(c => {
             const dateInfo = formatDate(c.date);
-
             if (dateInfo.month !== currentMonth) {
                 currentMonth = dateInfo.month;
-                html += `<div class="month-label">${currentMonth}</div>`;
+                html += `<div class="month-label">${escapeHtml(currentMonth)}</div>`;
             }
 
             const windowHrs = getWindowHours(c.checkoutTime, c.checkinTime);
-            const isTight = c.sameDayTurnaround;
-
-            html += `<div class="cleaning-card ${isTight ? 'same-day' : ''}">`;
-            html += `<div class="cleaning-date">${dateInfo.display}`;
-            if (isTight) html += `<span class="badge same-day">Same-day</span>`;
-            if (c.pets) html += `<span class="badge pets">🐾 Pets</span>`;
+            html += `<div class="cleaning-card ${c.sameDayTurnaround ? 'same-day' : ''}">`;
+            html += `<div class="cleaning-date">${escapeHtml(dateInfo.display)}`;
+            if (c.sameDayTurnaround) html += `<span class="badge same-day">Same-day</span>`;
+            if (c.pets) html += `<span class="badge pets">🐾 Deep clean</span>`;
             html += `</div>`;
-            html += `<div class="cleaning-day">${dateInfo.day}</div>`;
+            html += `<div class="cleaning-day">${escapeHtml(dateInfo.day)}</div>`;
 
-            // Checkout info
-            if (c.checkoutGuest) {
-                html += `<div class="cleaning-detail">
-                    <div class="icon">👋</div>
-                    <div class="info">
-                        <div class="label">Checkout</div>
-                        <div class="value">${c.checkoutGuest} — ${c.checkoutTime}</div>
-                    </div>
-                </div>`;
-            } else {
-                html += `<div class="cleaning-detail">
-                    <div class="icon">🧹</div>
-                    <div class="info">
-                        <div class="label">Checkout</div>
-                        <div class="value">Pre-arrival cleaning</div>
-                    </div>
-                </div>`;
-            }
+            html += `<div class="cleaning-detail"><div class="icon">👋</div><div class="info"><div class="label">Checkout</div><div class="value">${escapeHtml(c.checkoutGuest)} — ${escapeHtml(c.checkoutTime)}</div></div></div>`;
 
-            // Check-in info
+            html += `<div class="cleaning-detail"><div class="icon">🔑</div><div class="info"><div class="label">Next check-in</div><div class="value">`;
             if (c.checkinGuest) {
-                html += `<div class="cleaning-detail">
-                    <div class="icon">🔑</div>
-                    <div class="info">
-                        <div class="label">Next check-in</div>
-                        <div class="value">${c.checkinGuest} — ${c.checkinTime}</div>
-                    </div>
-                </div>`;
+                html += `${escapeHtml(c.checkinGuest)} — ${escapeHtml(c.checkinTime)}`;
             } else {
-                html += `<div class="cleaning-detail">
-                    <div class="icon">📭</div>
-                    <div class="info">
-                        <div class="label">Next check-in</div>
-                        <div class="value">No booking yet</div>
-                    </div>
-                </div>`;
+                html += 'No same-day check-in';
             }
+            html += `</div></div></div>`;
 
-            // Notes
             if (c.notes) {
-                html += `<div class="cleaning-detail">
-                    <div class="icon">📝</div>
-                    <div class="info">
-                        <div class="label">Notes</div>
-                        <div class="value">${c.notes}</div>
-                    </div>
-                </div>`;
+                html += `<div class="cleaning-detail"><div class="icon">📝</div><div class="info"><div class="label">Notes</div><div class="value">${escapeHtml(c.notes)}</div></div></div>`;
             }
 
-            // Cleaning window
             if (windowHrs) {
-                html += `<div class="window-bar ${windowHrs < 6 ? 'tight' : ''}">
-                    <div class="time">${windowHrs}h window</div>
-                    <div class="desc">${c.checkoutTime} → ${c.checkinTime}</div>
-                </div>`;
+                html += `<div class="window-bar ${windowHrs < 6 ? 'tight' : ''}"><div class="time">${windowHrs}h window</div><div class="desc">${escapeHtml(c.checkoutTime)} → ${escapeHtml(c.checkinTime)}</div></div>`;
             }
 
             html += `</div>`;
         });
 
         container.innerHTML = html;
-
-        // Updated timestamp
         const updatedDate = new Date(data.updated);
         document.getElementById('updated').textContent = `Last updated: ${updatedDate.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}`;
     }
